@@ -153,10 +153,13 @@ def create_ow_user(email):
     return res.json()
 
 def get_connect_url(user_id, provider):
-    res = requests.get(f"{OW_URL}/api/v1/users/{user_id}/connect/{provider}",
-        headers=get_ow_headers()
+    res = requests.get(
+        f"{OW_URL}/api/v1/oauth/{provider}/authorize",
+        headers=get_ow_headers(),
+        params={"user_id": user_id}
     )
-    return res.json().get("url")
+    data = res.json()
+    return data.get("url") or data.get("authorization_url")
 
 def get_user_vitals(user_id):
     res = requests.get(f"{OW_URL}/api/v1/users/{user_id}/data/latest",
